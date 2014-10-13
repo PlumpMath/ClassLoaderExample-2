@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="spi-test:jar2">
+    <output-path>$PROJECT_DIR$/out/artifacts/</output-path>
+    <root id="archive" name="spi-test-two.jar">
+      <element id="module-output" name="Spi_impl_two" />
+      <element id="file-copy" path="$PROJECT_DIR$/Spi_impl_two/src/main/resources/spiimpl.properties" />
+    </root>
+  </artifact>
+</component>
