@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-import java.util.jar.JarFile;
 
 /**
  * @author stuart-hostler
@@ -38,40 +37,40 @@ public class SpiMain {
             System.out.println("............");
             Thread.sleep(5000);
             //get all the jar files
-            List<URL> results = getAllTheFilesInADirectory(dynamicLoadDir);
+            List<URL> jars = getAllTheFilesInADirectory(dynamicLoadDir);
 
-            //URLClassLoader loader = new URLClassLoader(results.toArray(new URL[results.size()]), null); //do not search parent class loader.
-            URLClassLoader loader = new URLClassLoader(results.toArray(new URL[results.size()]));
+            //URLClassLoader loader = new URLClassLoader(jars.toArray(new URL[jars.size()]), null); //do not search parent class loader.
+            URLClassLoader loader = new URLClassLoader(jars.toArray(new URL[jars.size()]));
             Enumeration<URL> en = loader.getResources(PROPERTIES_FILE_NAME);
 
             //make a list of these classes
-            List<BaseClass> baseClasses = new ArrayList<BaseClass>();
+            List<PlugIn> plugIns = new ArrayList<PlugIn>();
 
             while (en.hasMoreElements()) {
                 URL url = en.nextElement();
 
                 JarURLConnection urlcon = (JarURLConnection) (url.openConnection());
-                JarFile jar = urlcon.getJarFile();
+                //JarFile jar = urlcon.getJarFile();
 
                 //get the properties file
                 Properties p = new Properties();
                 p.load(url.openStream());
 
                 Class tempClass = loader.loadClass(p.getProperty(CLASS_NAME_PROPERTY));
-                baseClasses.add((BaseClass) tempClass.newInstance());
+                plugIns.add((PlugIn) tempClass.newInstance());
 
             }
 
             //call the routines
-            for (BaseClass bc : baseClasses) {
-                System.out.println(bc.sayHello());
+            for (PlugIn bc : plugIns) {
+                System.out.println(bc.helloWorld());
             }
 
         }
     }
 
     private static List<URL> getAllTheFilesInADirectory(String directoryPath) throws MalformedURLException {
-        List<URL> results = new ArrayList<URL>();
+        List<URL> urls = new ArrayList<URL>();
 
 
         File[] files = new File(directoryPath).listFiles();
@@ -79,11 +78,11 @@ public class SpiMain {
         if(files != null) {
             for (File file : files) {
                 if (file.isFile()) {
-                    results.add(file.toURI().toURL());
+                    urls.add(file.toURI().toURL());
                 }
             }
         }
-        return results;
+        return urls;
     }
 }
 
